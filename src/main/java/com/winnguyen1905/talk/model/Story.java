@@ -5,9 +5,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "contact_id" }))
-public class UserContact {
-
+@Table(name = "story")
+public class Story {
   @Id
   @GeneratedValue
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
@@ -16,14 +15,8 @@ public class UserContact {
   @Column(name = "user_id", nullable = false)
   public UUID userId;
 
-  @Column(name = "contact_id", nullable = false)
-  public UUID contactId;
-
-  @Column(name = "first_name", nullable = false)
-  public String firstName = "";
-
-  @Column(name = "last_name", nullable = false)
-  public String lastName = "";
+  @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+  public String content;
 
   @Column(name = "created_at", nullable = false, updatable = false)
   public LocalDateTime createdAt = LocalDateTime.now();
@@ -31,22 +24,20 @@ public class UserContact {
   @Column(name = "updated_at", nullable = false)
   public LocalDateTime updatedAt = LocalDateTime.now();
 
+  @Column(name = "expires_at", nullable = false)
+  public LocalDateTime expiresAt;
+
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
   public User user;
 
-  @ManyToOne
-  @JoinColumn(name = "contact_id", insertable = false, updatable = false)
-  public User contact;
-
-  public UserContact() {
+  public Story() {
   }
 
-  public UserContact(UUID userId, UUID contactId, String firstName, String lastName) {
+  public Story(UUID userId, String content, LocalDateTime expiresAt) {
     this.userId = userId;
-    this.contactId = contactId;
-    this.firstName = firstName;
-    this.lastName = lastName;
+    this.content = content;
+    this.expiresAt = expiresAt;
     this.createdAt = LocalDateTime.now();
     this.updatedAt = LocalDateTime.now();
   }
