@@ -1,15 +1,19 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.util.UUID;
 import java.time.LocalDateTime;
 
 @Entity
+@SuperBuilder
 @Table(name = "contact")
 public class Contact {
 
-  @Id
-  @GeneratedValue
+  @Id    @GeneratedValue(strategy = GenerationType.UUID)
+
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
   public UUID id;
 
@@ -30,16 +34,5 @@ public class Contact {
 
   @Column(name = "created_at", nullable = false, updatable = false)
   public LocalDateTime createdAt = LocalDateTime.now();
-
-  public Contact() {
-  }
-
-  public Contact(String firstName, String middleName, String lastName, String phone, String email) {
-    this.firstName = firstName;
-    this.middleName = middleName;
-    this.lastName = lastName;
-    this.phone = phone;
-    this.email = email;
-    this.createdAt = LocalDateTime.now();
-  }
+ 
 }

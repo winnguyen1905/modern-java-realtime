@@ -1,15 +1,20 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.winnguyen1905.talk.common.constant.ReportStatus;
+
 @Entity
+@SuperBuilder
 @Table(name = "report")
 public class Report {
+  @Id     @GeneratedValue(strategy = GenerationType.UUID)
 
-  @Id
-  @GeneratedValue
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
   public UUID id;
 
@@ -35,16 +40,4 @@ public class Report {
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
   public User user;
-
-  public Report() {
-  }
-
-  public Report(UUID userId, UUID participantId, String reportType, String notes, ReportStatus status) {
-    this.userId = userId;
-    this.participantId = participantId;
-    this.reportType = reportType;
-    this.notes = notes;
-    this.status = status;
-    this.createdAt = LocalDateTime.now();
-  }
 }

@@ -1,17 +1,22 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.winnguyen1905.talk.common.constant.ParticipantType;
+
 @Entity
+@SuperBuilder
 @Table(name = "participant", uniqueConstraints = {
     @UniqueConstraint(columnNames = { "conversation_id", "user_id" })
 })
 public class Participant {
 
-  @Id
-  @GeneratedValue
+  @Id   @GeneratedValue
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
   public UUID id;
 
@@ -38,15 +43,5 @@ public class Participant {
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
   public User user;
-
-  public Participant() {
-  }
-
-  public Participant(UUID conversationId, UUID userId, ParticipantType type) {
-    this.conversationId = conversationId;
-    this.userId = userId;
-    this.type = type;
-    this.createdAt = LocalDateTime.now();
-    this.updatedAt = LocalDateTime.now();
-  }
+ 
 }

@@ -1,7 +1,10 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@SuperBuilder
 @Table(name = "user")
 public class User {
 
@@ -50,14 +54,6 @@ public class User {
 
   @Column(name = "preferences")
   private String preferences;
-
-  @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private LocalDateTime createdAt;
-
-  @UpdateTimestamp
-  @Column(name = "updated_at", nullable = false)
-  private LocalDateTime updatedAt;
 
   // Relationships
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

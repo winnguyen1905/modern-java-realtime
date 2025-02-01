@@ -1,14 +1,18 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@SuperBuilder
 @Table(name = "friend", uniqueConstraints = @UniqueConstraint(columnNames = { "requester_id", "receiver_id" }))
 public class Friend {
-  @Id
-  @GeneratedValue
+  @Id  @GeneratedValue(strategy = GenerationType.UUID)
+
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
   public UUID id;
 
@@ -31,14 +35,5 @@ public class Friend {
   @ManyToOne
   @JoinColumn(name = "receiver_id", insertable = false, updatable = false)
   public User receiver;
-
-  public Friend() {
-  }
-
-  public Friend(UUID requesterId, UUID receiverId, String status) {
-    this.requesterId = requesterId;
-    this.receiverId = receiverId;
-    this.status = status;
-    this.createdAt = LocalDateTime.now();
-  }
+ 
 }

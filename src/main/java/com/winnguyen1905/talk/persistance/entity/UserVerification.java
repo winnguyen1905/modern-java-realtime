@@ -1,28 +1,22 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import java.util.UUID;
 import jakarta.persistence.*;
-
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
+import lombok.experimental.SuperBuilder;
 
 @Entity
+@SuperBuilder
 @Table(name = "user_verification")
 public class UserVerification {
-  @Id
+  @Id   @GeneratedValue
   @Column(name = "user_id", columnDefinition = "UUID")
   private UUID userId;
 
   @Column(name = "verification_code", nullable = false)
   private String verificationCode;
 
-  @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private LocalDateTime createdAt;
-
-  @OneToOne
   @MapsId
+  @OneToOne
   @JoinColumn(name = "user_id")
   private User user;
 }

@@ -1,11 +1,14 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
+@SuperBuilder
 public class Attachment {
-  @Id
+  @Id  
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 

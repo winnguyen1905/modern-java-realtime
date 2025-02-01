@@ -1,17 +1,19 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import lombok.experimental.SuperBuilder;
+
 import java.util.UUID;
 
 import java.time.LocalDateTime;
 
 @Entity
+@SuperBuilder
 @Table(name = "block_list")
 public class BlockList {
 
-  @Id
-  @GeneratedValue
+  @Id  @GeneratedValue(strategy = GenerationType.UUID)
+
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
   public UUID id;
 
@@ -24,13 +26,5 @@ public class BlockList {
 
   @Column(name = "created_at", nullable = false, updatable = false)
   public LocalDateTime createdAt = LocalDateTime.now();
-
-  public BlockList() {
-  }
-
-  public BlockList(User user, UUID participantId) {
-    this.user = user;
-    this.participantId = participantId;
-    this.createdAt = LocalDateTime.now();
-  }
+ 
 }

@@ -1,16 +1,21 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.util.List;
 import java.util.UUID;
+
+import com.winnguyen1905.talk.common.constant.MessageType;
+
 import java.time.LocalDateTime;
 
 @Entity
+@SuperBuilder
 @Table(name = "message")
 public class Message {
-
-  @Id
-  @GeneratedValue
+  @Id@GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
   public UUID id;
 
@@ -49,16 +54,4 @@ public class Message {
 
   @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
   public List<DeletedMessage> deletedMessages;
-
-  public Message() {
-  }
-
-  public Message(String guid, UUID conversationId, UUID senderId, MessageType messageType, String message) {
-    this.guid = guid;
-    this.conversationId = conversationId;
-    this.senderId = senderId;
-    this.messageType = messageType;
-    this.message = message;
-    this.createdAt = LocalDateTime.now();
-  }
 }

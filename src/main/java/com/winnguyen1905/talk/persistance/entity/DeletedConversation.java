@@ -1,13 +1,18 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import org.hibernate.annotations.UuidGenerator;
 import java.time.LocalDateTime;
 
 @Entity
+@SuperBuilder
+@Table(name = "deleted_conversation")
 public class DeletedConversation {
-  @Id
+  @Id   @GeneratedValue
+
   @UuidGenerator
   private String id;
 

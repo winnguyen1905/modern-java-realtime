@@ -1,15 +1,18 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@SuperBuilder
 @Table(name = "user_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "contact_id" }))
 public class UserContact {
 
-  @Id
-  @GeneratedValue
+  @Id    @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
   public UUID id;
 
@@ -25,12 +28,6 @@ public class UserContact {
   @Column(name = "last_name", nullable = false)
   public String lastName = "";
 
-  @Column(name = "created_at", nullable = false, updatable = false)
-  public LocalDateTime createdAt = LocalDateTime.now();
-
-  @Column(name = "updated_at", nullable = false)
-  public LocalDateTime updatedAt = LocalDateTime.now();
-
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
   public User user;
@@ -38,16 +35,4 @@ public class UserContact {
   @ManyToOne
   @JoinColumn(name = "contact_id", insertable = false, updatable = false)
   public User contact;
-
-  public UserContact() {
-  }
-
-  public UserContact(UUID userId, UUID contactId, String firstName, String lastName) {
-    this.userId = userId;
-    this.contactId = contactId;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.createdAt = LocalDateTime.now();
-    this.updatedAt = LocalDateTime.now();
-  }
 }

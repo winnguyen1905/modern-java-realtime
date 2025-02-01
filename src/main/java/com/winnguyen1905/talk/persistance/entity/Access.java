@@ -1,22 +1,24 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
-
-import jakarta.persistence.Entity;
 
 import java.util.Date;
 import java.util.UUID;
 
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@SuperBuilder
 @Table(name = "access")
-public class EAccess {
+public class Access {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,13 +34,6 @@ public class EAccess {
   @Column(name = "token", nullable = false)
   private String token;
 
-  @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private LocalDateTime createdAt;
-
-  @Column(name = "deleted_at")
-  private LocalDateTime deletedAt;
-
   // Relationships
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
@@ -46,5 +41,5 @@ public class EAccess {
 
   @ManyToOne
   @JoinColumn(name = "device_id", insertable = false, updatable = false)
-  private EDevice device;
+  private Device device;
 }

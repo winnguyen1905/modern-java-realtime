@@ -1,12 +1,15 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
 @Entity
+@SuperBuilder
 @Table(name = "deleted_message")
 public class DeletedMessage {
   @Id
