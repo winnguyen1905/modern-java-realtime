@@ -6,8 +6,10 @@ import lombok.Builder;
 
 @Builder
 public record TAccountRequest(
-  UUID id,
-  TRole role) {
+    UUID id,
+    TRole role
+) {
+  
   public record TRole(
     String type
   ) {

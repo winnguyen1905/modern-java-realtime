@@ -11,4 +11,4 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @AuthenticationPrincipal(expression = "@fetchUser.apply(#this)", errorOnInvalidType=true)
-public @interface CurrentAccount {}
+public @interface AccountRequest {}

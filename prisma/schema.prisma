@@ -1,0 +1,252 @@
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "foreignKeys"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          String   @id @default(uuid()) @db.Uuid
+  phone       String   @unique
+  email       String   @unique
+  usernames   String   @unique
+  password    String
+  first_name  String   @default("")
+  middle_name String?  @default("")
+  last_name   String   @default("")
+  is_active   Boolean  @default(false)
+  is_reported Boolean  @default(false)
+  is_blocked  Boolean  @default(false)
+  preferences String?  @default("")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  devices               Device[]
+  messages              Message[]
+  participants          Participant[]
+  reports               Report[]
+  deleted_messages      DeletedMessage[]
+  deleted_conversations DeletedConversation[]
+  accesses              Access[]
+  user_contacts         UserContact[]         @relation("UserContacts")
+  contacts              UserContact[]         @relation("ContactRelation")
+  block_lists           BlockList[]
+  user_verification     UserVerification?
+  stories               Story[]
+  friends_requested     Friend[]              @relation("UserRequester")
+  friends_received      Friend[]              @relation("UserReceiver")
+}
+
+model Device {
+  id           String     @id @default(uuid()) @db.Uuid
+  user_id      String     @db.Uuid
+  device_id    String
+  device_token String
+  type         DeviceType
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+
+  user     User     @relation(fields: [user_id], references: [id])
+  accesses Access[]
+}
+
+model Access {
+  id         String    @id @default(uuid()) @db.Uuid
+  user_id    String    @db.Uuid
+  device_id  String    @db.Uuid
+  token      String
+  created_at DateTime  @default(now())
+  deleted_at DateTime?
+
+  user   User   @relation(fields: [user_id], references: [id])
+  device Device @relation(fields: [device_id], references: [id])
+}
+
+model UserVerification {
+  user_id           String   @id @default(uuid()) @db.Uuid
+  verification_code String
+  created_at        DateTime
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model UserContact {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  contact_id String   @db.Uuid
+  first_name String   @default("")
+  last_name  String   @default("")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user    User @relation("UserContacts", fields: [user_id], references: [id])
+  contact User @relation("ContactRelation", fields: [contact_id], references: [id])
+
+  @@unique([user_id, contact_id])
+}
+
+model Contact {
+  id          String   @id @default(uuid()) @db.Uuid
+  first_name  String   @default("")
+  middle_name String?  @default("")
+  last_name   String   @default("")
+  phone       String
+  email       String
+  created_at  DateTime @default(now())
+}
+
+model BlockList {
+  id             String   @id @default(uuid()) @db.Uuid
+  user_id        String   @db.Uuid
+  participant_id String   @db.Uuid
+  created_at     DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Conversation {
+  id         String    @id @default(uuid()) @db.Uuid
+  title      String
+  creator_id String    @db.Uuid
+  channel_id String    @db.Uuid
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  messages              Message[]
+  participants          Participant[]
+  deleted_conversations DeletedConversation[]
+}
+
+model Participant {
+  id              String          @id @default(uuid()) @db.Uuid
+  conversation_id String          @db.Uuid
+  user_id         String          @db.Uuid
+  type            ParticipantType
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+
+  user         User         @relation(fields: [user_id], references: [id])
+  conversation Conversation @relation(fields: [conversation_id], references: [id])
+
+  @@unique([conversation_id, user_id])
+}
+
+model Message {
+  id              String      @id @default(uuid()) @db.Uuid
+  guid            String
+  conversation_id String      @db.Uuid
+  sender_id       String      @db.Uuid
+  message_type    MessageType
+  message         String      @default("")
+  created_at      DateTime    @default(now())
+  deleted_at      DateTime?
+
+  conversation     Conversation     @relation(fields: [conversation_id], references: [id])
+  user             User             @relation(fields: [sender_id], references: [id])
+  attachments      Attachment[]
+  deleted_messages DeletedMessage[]
+}
+
+model Attachment {
+  id         String   @id @default(uuid()) @db.Uuid
+  message_id String   @db.Uuid
+  thumb_url  String
+  file_url   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  message Message @relation(fields: [message_id], references: [id])
+}
+
+model DeletedMessage {
+  id         String   @id @default(uuid()) @db.Uuid
+  message_id String   @db.Uuid
+  user_id    String   @db.Uuid
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  message Message @relation(fields: [message_id], references: [id])
+  user    User    @relation(fields: [user_id], references: [id])
+}
+
+model DeletedConversation {
+  id              String   @id @default(uuid()) @db.Uuid
+  conversation_id String   @db.Uuid
+  user_id         String   @db.Uuid
+  created_at      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversation_id], references: [id])
+  user         User         @relation(fields: [user_id], references: [id])
+}
+
+model Report {
+  id             String       @id @default(uuid()) @db.Uuid
+  user_id        String       @db.Uuid
+  participant_id String       @db.Uuid
+  report_type    String
+  notes          String?
+  status         ReportStatus @default(PENDING)
+  created_at     DateTime     @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Activity {
+  id            String   @id @default(uuid()) @db.Uuid
+  activity_type String
+  activity_id   String   @db.Uuid
+  title         String
+  detail        String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model Friend {
+  id           String @id @default(uuid()) @db.Uuid
+  requester_id String @db.Uuid
+  receiver_id  String @db.Uuid
+  status       String @default("PENDING") // PENDING, ACCEPTED, REJECTED
+
+  requester User @relation("UserRequester", fields: [requester_id], references: [id])
+  receiver  User @relation("UserReceiver", fields: [receiver_id], references: [id])
+
+  created_at DateTime @default(now())
+
+  @@unique([requester_id, receiver_id])
+}
+
+model Story {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  content    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  expires_at DateTime
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+enum MessageType {
+  text
+  image
+  vedio
+  audio
+}
+
+enum ParticipantType {
+  lead
+  member
+}
+
+enum DeviceType {
+  APPLE
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+}
