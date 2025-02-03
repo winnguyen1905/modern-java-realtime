@@ -1,100 +1,135 @@
 package com.winnguyen1905.talk.persistance.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+
+import org.springframework.data.relational.core.mapping.Column;
+// import jakarta.persistence.FetchType;
+// import jakarta.persistence.OneToMany;
+// import jakarta.persistence.OneToOne;
+import org.springframework.data.annotation.Transient;
 
 @Entity
 @SuperBuilder
-@Table(name = "user")
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "user", schema = "public")
 public class User {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", columnDefinition = "UUID")
-  private UUID id;
+  @Column("id")
+  private UUID id; 
 
-  @Column(name = "phone", unique = true, nullable = false)
+  @Column("phone")
   private String phone;
 
-  @Column(name = "email", unique = true, nullable = false)
+  @Column("email")
   private String email;
 
-  @Column(name = "usernames", unique = true, nullable = false)
+  @Column("usernames")
   private String usernames;
 
-  @Column(name = "password", nullable = false)
+  @Column("password")
   private String password;
 
-  @Column(name = "first_name", nullable = false, columnDefinition = "varchar(255) default ''")
+  @Column("first_name")
   private String firstName;
 
-  @Column(name = "middle_name")
+  @Column("middle_name")
   private String middleName;
 
-  @Column(name = "last_name", nullable = false, columnDefinition = "varchar(255) default ''")
+  @Column("last_name")
   private String lastName;
 
-  @Column(name = "is_active", nullable = false, columnDefinition = "boolean default false")
+  @Column("is_active")
   private Boolean isActive;
 
-  @Column(name = "is_reported", nullable = false, columnDefinition = "boolean default false")
+  @Column("is_reported")
   private Boolean isReported;
 
-  @Column(name = "is_blocked", nullable = false, columnDefinition = "boolean default false")
+  @Column("is_blocked")
   private Boolean isBlocked;
 
-  @Column(name = "preferences")
+  @Column("preferences")
   private String preferences;
 
   // Relationships
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Device> devices;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<Device> devices = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Message> messages;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<Message> messages = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Participant> participants;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<Participant> participants = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Report> reports;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<Report> reports = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<DeletedMessage> deletedMessages;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<DeletedMessage> deletedMessages = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<DeletedConversation> deletedConversations;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<DeletedConversation> deletedConversations = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Access> accesses;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<Access> accesses = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<UserContact> userContacts;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<UserContact> userContacts = new ArrayList<>();
 
-  @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<UserContact> contacts;
+  @Transient
+  // @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<UserContact> contacts = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<BlockList> blockLists;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<BlockList> blockLists = new ArrayList<>();
 
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Transient
+  // @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private UserVerification userVerification;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Story> stories;
+  @Transient
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<Story> stories = new ArrayList<>();
 
-  @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Friend> friendsRequested;
+  @Transient
+  // @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<Friend> friendsRequested = new ArrayList<>();
 
-  @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Friend> friendsReceived;
+  @Transient
+  // @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<Friend> friendsReceived = new ArrayList<>();
 }

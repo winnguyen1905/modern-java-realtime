@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity

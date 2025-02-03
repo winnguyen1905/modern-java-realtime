@@ -3,7 +3,7 @@ package com.winnguyen1905.talk.persistance.entity;
 import jakarta.persistence.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -23,7 +23,7 @@ public class Story {
   public String content;
 
   @Column(name = "expires_at", nullable = false)
-  public LocalDateTime expiresAt;
+  public Instant expiresAt;
 
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)

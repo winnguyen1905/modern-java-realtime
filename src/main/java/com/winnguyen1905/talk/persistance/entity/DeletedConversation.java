@@ -5,28 +5,22 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import org.hibernate.annotations.UuidGenerator;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @SuperBuilder
 @Table(name = "deleted_conversation")
 public class DeletedConversation {
-  @Id   @GeneratedValue
-
-  @UuidGenerator
-  private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Column(name = "message_id")
   private String messageId;
 
   @Column(name = "user_id")
   private String userId;
-
-  @Column(name = "created_at")
-  private LocalDateTime createdAt = LocalDateTime.now();
-
-  @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
 
   @ManyToOne
   @JoinColumn(name = "message_id", insertable = false, updatable = false)
@@ -35,9 +29,4 @@ public class DeletedConversation {
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
   private User user;
-
-  @PreUpdate
-  protected void onUpdate() {
-    updatedAt = LocalDateTime.now();
-  }
 }

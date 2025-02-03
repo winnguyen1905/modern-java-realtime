@@ -1,10 +1,9 @@
 package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 import com.winnguyen1905.talk.common.constant.ParticipantType;
@@ -15,26 +14,14 @@ import com.winnguyen1905.talk.common.constant.ParticipantType;
     @UniqueConstraint(columnNames = { "conversation_id", "user_id" })
 })
 public class Participant {
-
-  @Id   @GeneratedValue
+  @Id
+  @GeneratedValue
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
   public UUID id;
-
-  @Column(name = "conversation_id", nullable = false)
-  public UUID conversationId;
-
-  @Column(name = "user_id", nullable = false)
-  public UUID userId;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "type", nullable = false)
   public ParticipantType type;
-
-  @Column(name = "created_at", nullable = false, updatable = false)
-  public LocalDateTime createdAt = LocalDateTime.now();
-
-  @Column(name = "updated_at")
-  public LocalDateTime updatedAt;
 
   @ManyToOne
   @JoinColumn(name = "conversation_id", insertable = false, updatable = false)
@@ -43,5 +30,4 @@ public class Participant {
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
   public User user;
- 
 }

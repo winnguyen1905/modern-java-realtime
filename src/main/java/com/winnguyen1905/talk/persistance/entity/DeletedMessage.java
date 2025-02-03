@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -23,10 +23,10 @@ public class DeletedMessage {
   private UUID userId;
 
   @Column(name = "created_at")
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 
   @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
+  private Instant updatedAt;
 
   @ManyToOne
   @JoinColumn(name = "message_id", insertable = false, updatable = false)

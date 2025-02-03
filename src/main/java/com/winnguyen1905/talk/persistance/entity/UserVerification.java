@@ -8,9 +8,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Table(name = "user_verification")
 public class UserVerification {
-  @Id   @GeneratedValue
+  @Id   
+  @GeneratedValue
   @Column(name = "user_id", columnDefinition = "UUID")
-  private UUID userId;
+  private UUID id;
 
   @Column(name = "verification_code", nullable = false)
   private String verificationCode;

@@ -5,7 +5,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @SuperBuilder
@@ -25,6 +25,6 @@ public class BlockList {
   public UUID participantId;
 
   @Column(name = "created_at", nullable = false, updatable = false)
-  public LocalDateTime createdAt = LocalDateTime.now();
+  public Instant createdAt = Instant.now();
  
 }

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import com.winnguyen1905.talk.common.constant.MessageType;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @SuperBuilder
@@ -36,10 +36,10 @@ public class Message {
   public String message = "";
 
   @Column(name = "created_at", nullable = false, updatable = false)
-  public LocalDateTime createdAt = LocalDateTime.now();
+  public Instant createdAt = Instant.now();
 
   @Column(name = "deleted_at")
-  public LocalDateTime deletedAt;
+  public Instant deletedAt;
 
   @ManyToOne
   @JoinColumn(name = "conversation_id", insertable = false, updatable = false)

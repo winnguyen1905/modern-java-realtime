@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +26,7 @@ public class Friend {
   public String status = "PENDING"; // PENDING, ACCEPTED, REJECTED
 
   @Column(name = "created_at", nullable = false, updatable = false)
-  public LocalDateTime createdAt = LocalDateTime.now();
+  public Instant createdAt = Instant.now();
 
   @ManyToOne
   @JoinColumn(name = "requester_id", insertable = false, updatable = false)

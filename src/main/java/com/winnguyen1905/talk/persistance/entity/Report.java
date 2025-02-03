@@ -1,10 +1,10 @@
 package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder.Default;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 import com.winnguyen1905.talk.common.constant.ReportStatus;
@@ -13,9 +13,9 @@ import com.winnguyen1905.talk.common.constant.ReportStatus;
 @SuperBuilder
 @Table(name = "report")
 public class Report {
-  @Id     @GeneratedValue(strategy = GenerationType.UUID)
-
-  @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
+  @Id     
+  @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name = "id", columnDefinition = "UUID", updatable = false)
   public UUID id;
 
   @Column(name = "user_id", nullable = false)
@@ -30,12 +30,10 @@ public class Report {
   @Column(name = "notes")
   public String notes;
 
+  @Default
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)
   public ReportStatus status = ReportStatus.PENDING;
-
-  @Column(name = "created_at", nullable = false, updatable = false)
-  public LocalDateTime createdAt = LocalDateTime.now();
 
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
