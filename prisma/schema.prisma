@@ -8,11 +8,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
+model user {
   id          String   @id @default(uuid()) @db.Uuid
   phone       String   @unique
   email       String   @unique
-  usernames   String   @unique
+  username    String   @unique
   password    String
   first_name  String   @default("")
   middle_name String?  @default("")
@@ -24,36 +24,61 @@ model User {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  devices               Device[]
-  messages              Message[]
-  participants          Participant[]
-  reports               Report[]
-  deleted_messages      DeletedMessage[]
-  deleted_conversations DeletedConversation[]
-  accesses              Access[]
-  user_contacts         UserContact[]         @relation("UserContacts")
-  contacts              UserContact[]         @relation("ContactRelation")
-  block_lists           BlockList[]
-  user_verification     UserVerification?
-  stories               Story[]
-  friends_requested     Friend[]              @relation("UserRequester")
-  friends_received      Friend[]              @relation("UserReceiver")
+  devices               device[]
+  messages              message[]
+  participants          participant[]
+  reports               report[]
+  deleted_messages      deleted_message[]
+  deleted_conversations deleted_conversation[]
+  accesses              access[]
+  user_contacts         user_contact[]         @relation("user_contacts")
+  contacts              user_contact[]         @relation("contact_relation")
+  block_lists           block_list[]
+  user_verification     user_verification?
+  stories               story[]                @relation("user_story")
+  friends_requested     friend[]               @relation("user_requester")
+  friends_received      friend[]               @relation("user_receiver")
 }
 
-model Device {
-  id           String     @id @default(uuid()) @db.Uuid
-  user_id      String     @db.Uuid
+model friend {
+  id           String @id @default(uuid()) @db.Uuid
+  requester_id String @db.Uuid
+  receiver_id  String @db.Uuid
+  status       String @default("PENDING") // PENDING, ACCEPTED, REJECTED
+
+  requester user @relation("user_requester", fields: [requester_id], references: [id])
+  receiver  user @relation("user_receiver", fields: [receiver_id], references: [id])
+
+  created_at DateTime @default(now())
+
+  @@unique([requester_id, receiver_id])
+}
+
+model story {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  content    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  expires_at DateTime
+
+  user user @relation("user_story", fields: [user_id], references: [id])
+}
+
+model device {
+  id           String      @id @default(uuid()) @db.Uuid
+  user_id      String      @db.Uuid
   device_id    String
   device_token String
-  type         DeviceType
-  created_at   DateTime   @default(now())
-  updated_at   DateTime   @updatedAt
+  type         device_type
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
 
-  user     User     @relation(fields: [user_id], references: [id])
-  accesses Access[]
+  user     user     @relation(fields: [user_id], references: [id])
+  accesses access[]
 }
 
-model Access {
+model access {
   id         String    @id @default(uuid()) @db.Uuid
   user_id    String    @db.Uuid
   device_id  String    @db.Uuid
@@ -61,19 +86,19 @@ model Access {
   created_at DateTime  @default(now())
   deleted_at DateTime?
 
-  user   User   @relation(fields: [user_id], references: [id])
-  device Device @relation(fields: [device_id], references: [id])
+  user   user   @relation(fields: [user_id], references: [id])
+  device device @relation(fields: [device_id], references: [id])
 }
 
-model UserVerification {
+model user_verification {
   user_id           String   @id @default(uuid()) @db.Uuid
   verification_code String
   created_at        DateTime
 
-  user User @relation(fields: [user_id], references: [id])
+  user user @relation(fields: [user_id], references: [id])
 }
 
-model UserContact {
+model user_contact {
   id         String   @id @default(uuid()) @db.Uuid
   user_id    String   @db.Uuid
   contact_id String   @db.Uuid
@@ -82,13 +107,13 @@ model UserContact {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user    User @relation("UserContacts", fields: [user_id], references: [id])
-  contact User @relation("ContactRelation", fields: [contact_id], references: [id])
+  user    user @relation("user_contacts", fields: [user_id], references: [id])
+  contact user @relation("contact_relation", fields: [contact_id], references: [id])
 
   @@unique([user_id, contact_id])
 }
 
-model Contact {
+model contact {
   id          String   @id @default(uuid()) @db.Uuid
   first_name  String   @default("")
   middle_name String?  @default("")
@@ -98,16 +123,16 @@ model Contact {
   created_at  DateTime @default(now())
 }
 
-model BlockList {
+model block_list {
   id             String   @id @default(uuid()) @db.Uuid
   user_id        String   @db.Uuid
   participant_id String   @db.Uuid
   created_at     DateTime @default(now())
 
-  user User @relation(fields: [user_id], references: [id])
+  user user @relation(fields: [user_id], references: [id])
 }
 
-model Conversation {
+model conversation {
   id         String    @id @default(uuid()) @db.Uuid
   title      String
   creator_id String    @db.Uuid
@@ -116,42 +141,42 @@ model Conversation {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  messages              Message[]
-  participants          Participant[]
-  deleted_conversations DeletedConversation[]
+  messages              message[]
+  participants          participant[]
+  deleted_conversations deleted_conversation[]
 }
 
-model Participant {
-  id              String          @id @default(uuid()) @db.Uuid
-  conversation_id String          @db.Uuid
-  user_id         String          @db.Uuid
-  type            ParticipantType
-  created_at      DateTime        @default(now())
-  updated_at      DateTime        @updatedAt
+model participant {
+  id              String           @id @default(uuid()) @db.Uuid
+  conversation_id String           @db.Uuid
+  user_id         String           @db.Uuid
+  type            participant_type
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
 
-  user         User         @relation(fields: [user_id], references: [id])
-  conversation Conversation @relation(fields: [conversation_id], references: [id])
+  user         user         @relation(fields: [user_id], references: [id])
+  conversation conversation @relation(fields: [conversation_id], references: [id])
 
   @@unique([conversation_id, user_id])
 }
 
-model Message {
-  id              String      @id @default(uuid()) @db.Uuid
+model message {
+  id              String       @id @default(uuid()) @db.Uuid
   guid            String
-  conversation_id String      @db.Uuid
-  sender_id       String      @db.Uuid
-  message_type    MessageType
-  message         String      @default("")
-  created_at      DateTime    @default(now())
+  conversation_id String       @db.Uuid
+  sender_id       String       @db.Uuid
+  message_type    message_type
+  message         String       @default("")
+  created_at      DateTime     @default(now())
   deleted_at      DateTime?
 
-  conversation     Conversation     @relation(fields: [conversation_id], references: [id])
-  user             User             @relation(fields: [sender_id], references: [id])
-  attachments      Attachment[]
-  deleted_messages DeletedMessage[]
+  conversation     conversation      @relation(fields: [conversation_id], references: [id])
+  user             user              @relation(fields: [sender_id], references: [id])
+  attachments      attachment[]
+  deleted_messages deleted_message[]
 }
 
-model Attachment {
+model attachment {
   id         String   @id @default(uuid()) @db.Uuid
   message_id String   @db.Uuid
   thumb_url  String
@@ -159,94 +184,59 @@ model Attachment {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  message Message @relation(fields: [message_id], references: [id])
+  message message @relation(fields: [message_id], references: [id])
 }
 
-model DeletedMessage {
+model deleted_message {
   id         String   @id @default(uuid()) @db.Uuid
   message_id String   @db.Uuid
   user_id    String   @db.Uuid
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  message Message @relation(fields: [message_id], references: [id])
-  user    User    @relation(fields: [user_id], references: [id])
+  message message @relation(fields: [message_id], references: [id])
+  user    user    @relation(fields: [user_id], references: [id])
 }
 
-model DeletedConversation {
+model deleted_conversation {
   id              String   @id @default(uuid()) @db.Uuid
   conversation_id String   @db.Uuid
   user_id         String   @db.Uuid
   created_at      DateTime @default(now())
 
-  conversation Conversation @relation(fields: [conversation_id], references: [id])
-  user         User         @relation(fields: [user_id], references: [id])
+  conversation conversation @relation(fields: [conversation_id], references: [id])
+  user         user         @relation(fields: [user_id], references: [id])
 }
 
-model Report {
-  id             String       @id @default(uuid()) @db.Uuid
-  user_id        String       @db.Uuid
-  participant_id String       @db.Uuid
+model report {
+  id             String        @id @default(uuid()) @db.Uuid
+  user_id        String        @db.Uuid
+  participant_id String        @db.Uuid
   report_type    String
   notes          String?
-  status         ReportStatus @default(PENDING)
-  created_at     DateTime     @default(now())
+  status         report_status @default(pending)
+  created_at     DateTime      @default(now())
 
-  user User @relation(fields: [user_id], references: [id])
+  user user @relation(fields: [user_id], references: [id])
 }
 
-model Activity {
-  id            String   @id @default(uuid()) @db.Uuid
-  activity_type String
-  activity_id   String   @db.Uuid
-  title         String
-  detail        String?
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
-}
-
-model Friend {
-  id           String @id @default(uuid()) @db.Uuid
-  requester_id String @db.Uuid
-  receiver_id  String @db.Uuid
-  status       String @default("PENDING") // PENDING, ACCEPTED, REJECTED
-
-  requester User @relation("UserRequester", fields: [requester_id], references: [id])
-  receiver  User @relation("UserReceiver", fields: [receiver_id], references: [id])
-
-  created_at DateTime @default(now())
-
-  @@unique([requester_id, receiver_id])
-}
-
-model Story {
-  id         String   @id @default(uuid()) @db.Uuid
-  user_id    String   @db.Uuid
-  content    String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  expires_at DateTime
-
-  user User @relation(fields: [user_id], references: [id])
-}
-
-enum MessageType {
+enum message_type {
   text
   image
-  vedio
+  video
   audio
 }
 
-enum ParticipantType {
+enum participant_type {
   lead
   member
 }
 
-enum DeviceType {
-  APPLE
+enum device_type {
+  apple
 }
 
-enum ReportStatus {
-  PENDING
-  RESOLVED
+enum report_status {
+  pending
+  resolved
 }

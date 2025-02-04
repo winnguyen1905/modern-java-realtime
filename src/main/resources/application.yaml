@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: chat-call
+  liquibase:
+    url: ${DB_URL}
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    properties:
+      hibernate:
+        schema: public
+  r2dbc:
+    url: ${R2DBC_URL}
+    properties:
+      schema: public
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    database: ${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    log-level: DEBUG
+    pool:
+      initial-size: 5
+      max-size: 20
+      max-idle-time: 30m
+    initialization-mode: none
+
+  sql:
+    init:
+      platform: postgresql
+      mode: always
+
+  data:
+    r2dbc:
+      repositories:
+        enabled: true # Enable reactive repositories
+
+server:
+  port: 8085
+
+logging:
+  level:
+    io:
+      r2dbc:
+        postgresql:
+          query: DEBUG
+        client:
+          sql:
+            enabled: false

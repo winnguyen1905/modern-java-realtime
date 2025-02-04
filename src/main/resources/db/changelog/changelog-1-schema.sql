@@ -1,48 +1,22 @@
--- Disable foreign key checks
-SET session_replication_role = 'replica';
-
-DO $$ 
-DECLARE 
-    r RECORD;
-BEGIN
-    -- Drop all tables in the public schema
-    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
-    END LOOP;
-    
-    -- Drop all ENUM types in the public schema
-    FOR r IN (SELECT n.nspname AS schema_name, t.typname AS enum_name 
-              FROM pg_type t 
-              JOIN pg_enum e ON t.oid = e.enumtypid 
-              JOIN pg_namespace n ON n.oid = t.typnamespace
-              GROUP BY n.nspname, t.typname) 
-    LOOP
-        EXECUTE 'DROP TYPE IF EXISTS ' || quote_ident(r.schema_name) || '.' || quote_ident(r.enum_name) || ' CASCADE';
-    END LOOP;
-END $$;
-
--- Re-enable foreign key checks
-SET session_replication_role = 'origin';
-
-
 
 -- CreateEnum
-CREATE TYPE "MessageType" AS ENUM ('text', 'image', 'vedio', 'audio');
+CREATE TYPE "message_type" AS ENUM ('text', 'image', 'video', 'audio');
 
 -- CreateEnum
-CREATE TYPE "ParticipantType" AS ENUM ('single', 'group');
+CREATE TYPE "participant_type" AS ENUM ('lead', 'member');
 
 -- CreateEnum
-CREATE TYPE "DeviceType" AS ENUM ('APPLE');
+CREATE TYPE "device_type" AS ENUM ('APPLE');
 
 -- CreateEnum
-CREATE TYPE "ReportStatus" AS ENUM ('PENDING', 'RESOLVED');
+CREATE TYPE "report_status" AS ENUM ('PENDING', 'RESOLVED');
 
 -- CreateTable
-CREATE TABLE "User" (
-    "id" UUID NOT NULL,
+CREATE TABLE "user" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "phone" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "first_name" TEXT NOT NULL DEFAULT '',
     "middle_name" TEXT DEFAULT '',
@@ -54,46 +28,46 @@ CREATE TABLE "User" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "user_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Device" (
-    "id" UUID NOT NULL,
+CREATE TABLE "device" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "device_id" TEXT NOT NULL,
     "device_token" TEXT NOT NULL,
-    "type" "DeviceType" NOT NULL,
+    "type" "device_type" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Device_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "device_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Access" (
-    "id" UUID NOT NULL,
+CREATE TABLE "access" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "device_id" UUID NOT NULL,
     "token" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
 
-    CONSTRAINT "Access_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "access_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "UserVerification" (
+CREATE TABLE "user_verification" (
     "user_id" UUID NOT NULL,
     "verification_code" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "UserVerification_pkey" PRIMARY KEY ("user_id")
+    CONSTRAINT "user_verification_pkey" PRIMARY KEY ("user_id")
 );
 
 -- CreateTable
-CREATE TABLE "UserContact" (
-    "id" UUID NOT NULL,
+CREATE TABLE "user_contact" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "contact_id" UUID NOT NULL,
     "first_name" TEXT NOT NULL DEFAULT '',
@@ -101,12 +75,12 @@ CREATE TABLE "UserContact" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "UserContact_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "user_contact_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Contact" (
-    "id" UUID NOT NULL,
+CREATE TABLE "contact" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "first_name" TEXT NOT NULL DEFAULT '',
     "middle_name" TEXT DEFAULT '',
     "last_name" TEXT NOT NULL DEFAULT '',
@@ -114,22 +88,22 @@ CREATE TABLE "Contact" (
     "email" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Contact_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "contact_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "BlockList" (
-    "id" UUID NOT NULL,
+CREATE TABLE "block_list" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "participant_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "BlockList_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "block_list_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Conversation" (
-    "id" UUID NOT NULL,
+CREATE TABLE "conversation" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "title" TEXT NOT NULL,
     "creator_id" UUID NOT NULL,
     "channel_id" UUID NOT NULL,
@@ -137,84 +111,84 @@ CREATE TABLE "Conversation" (
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
 
-    CONSTRAINT "Conversation_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "conversation_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Participant" (
-    "id" UUID NOT NULL,
+CREATE TABLE "participant" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "conversation_id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
-    "type" "ParticipantType" NOT NULL,
+    "type" "participant_type" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Participant_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "participant_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Message" (
-    "id" UUID NOT NULL,
+CREATE TABLE "message" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "guid" TEXT NOT NULL,
     "conversation_id" UUID NOT NULL,
     "sender_id" UUID NOT NULL,
-    "message_type" "MessageType" NOT NULL,
+    "message_type" "message_type" NOT NULL,
     "message" TEXT NOT NULL DEFAULT '',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
 
-    CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "message_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Attachment" (
-    "id" UUID NOT NULL,
+CREATE TABLE "attachment" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "message_id" UUID NOT NULL,
     "thumb_url" TEXT NOT NULL,
     "file_url" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Attachment_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "attachment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "DeletedMessage" (
-    "id" UUID NOT NULL,
+CREATE TABLE "deleted_message" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "message_id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "DeletedMessage_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "deleted_message_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "DeletedConversation" (
-    "id" UUID NOT NULL,
+CREATE TABLE "deleted_conversation" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "conversation_id" UUID NOT NULL,
     "user_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "DeletedConversation_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "deleted_conversation_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Report" (
-    "id" UUID NOT NULL,
+CREATE TABLE "report" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "participant_id" UUID NOT NULL,
     "report_type" TEXT NOT NULL,
     "notes" TEXT,
-    "status" "ReportStatus" NOT NULL DEFAULT 'PENDING',
+    "status" "report_status" NOT NULL DEFAULT 'PENDING',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Report_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "report_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Activity" (
-    "id" UUID NOT NULL,
+CREATE TABLE "activity" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "activity_type" TEXT NOT NULL,
     "activity_id" UUID NOT NULL,
     "title" TEXT NOT NULL,
@@ -222,103 +196,103 @@ CREATE TABLE "Activity" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Activity_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "activity_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Friend" (
-    "id" UUID NOT NULL,
+CREATE TABLE "friend" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "requester_id" UUID NOT NULL,
     "receiver_id" UUID NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Friend_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "friend_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Story" (
-    "id" UUID NOT NULL,
+CREATE TABLE "story" (
+    "id" UUID DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "content" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "expires_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Story_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "story_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
+CREATE UNIQUE INDEX "user_phone_key" ON "user"("phone");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "UserContact_user_id_contact_id_key" ON "UserContact"("user_id", "contact_id");
+CREATE UNIQUE INDEX "user_contact_user_id_contact_id_key" ON "user_contact"("user_id", "contact_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Participant_conversation_id_user_id_key" ON "Participant"("conversation_id", "user_id");
+CREATE UNIQUE INDEX "participant_conversation_id_user_id_key" ON "participant"("conversation_id", "user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Friend_requester_id_receiver_id_key" ON "Friend"("requester_id", "receiver_id");
+CREATE UNIQUE INDEX "friend_requester_id_receiver_id_key" ON "friend"("requester_id", "receiver_id");
 
 -- AddForeignKey
-ALTER TABLE "Device" ADD CONSTRAINT "Device_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "device" ADD CONSTRAINT "device_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Access" ADD CONSTRAINT "Access_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "access" ADD CONSTRAINT "access_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Access" ADD CONSTRAINT "Access_device_id_fkey" FOREIGN KEY ("device_id") REFERENCES "Device"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "access" ADD CONSTRAINT "access_device_id_fkey" FOREIGN KEY ("device_id") REFERENCES "device"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserVerification" ADD CONSTRAINT "UserVerification_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_verification" ADD CONSTRAINT "user_verification_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserContact" ADD CONSTRAINT "UserContact_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_contact" ADD CONSTRAINT "user_contact_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserContact" ADD CONSTRAINT "UserContact_contact_id_fkey" FOREIGN KEY ("contact_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_contact" ADD CONSTRAINT "user_contact_contact_id_fkey" FOREIGN KEY ("contact_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "BlockList" ADD CONSTRAINT "BlockList_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "block_list" ADD CONSTRAINT "block_list_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Participant" ADD CONSTRAINT "Participant_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "participant" ADD CONSTRAINT "participant_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Participant" ADD CONSTRAINT "Participant_conversation_id_fkey" FOREIGN KEY ("conversation_id") REFERENCES "Conversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "participant" ADD CONSTRAINT "participant_conversation_id_fkey" FOREIGN KEY ("conversation_id") REFERENCES "conversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Message" ADD CONSTRAINT "Message_conversation_id_fkey" FOREIGN KEY ("conversation_id") REFERENCES "Conversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "message" ADD CONSTRAINT "message_conversation_id_fkey" FOREIGN KEY ("conversation_id") REFERENCES "conversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Message" ADD CONSTRAINT "Message_sender_id_fkey" FOREIGN KEY ("sender_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "message" ADD CONSTRAINT "message_sender_id_fkey" FOREIGN KEY ("sender_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_message_id_fkey" FOREIGN KEY ("message_id") REFERENCES "Message"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "attachment" ADD CONSTRAINT "attachment_message_id_fkey" FOREIGN KEY ("message_id") REFERENCES "message"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DeletedMessage" ADD CONSTRAINT "DeletedMessage_message_id_fkey" FOREIGN KEY ("message_id") REFERENCES "Message"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "deleted_message" ADD CONSTRAINT "deleted_message_message_id_fkey" FOREIGN KEY ("message_id") REFERENCES "message"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DeletedMessage" ADD CONSTRAINT "DeletedMessage_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "deleted_message" ADD CONSTRAINT "deleted_message_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DeletedConversation" ADD CONSTRAINT "DeletedConversation_conversation_id_fkey" FOREIGN KEY ("conversation_id") REFERENCES "Conversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "deleted_conversation" ADD CONSTRAINT "deleted_conversation_conversation_id_fkey" FOREIGN KEY ("conversation_id") REFERENCES "conversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DeletedConversation" ADD CONSTRAINT "DeletedConversation_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "deleted_conversation" ADD CONSTRAINT "deleted_conversation_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Report" ADD CONSTRAINT "Report_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "report" ADD CONSTRAINT "report_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Friend" ADD CONSTRAINT "Friend_requester_id_fkey" FOREIGN KEY ("requester_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "friend" ADD CONSTRAINT "friend_requester_id_fkey" FOREIGN KEY ("requester_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Friend" ADD CONSTRAINT "Friend_receiver_id_fkey" FOREIGN KEY ("receiver_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "friend" ADD CONSTRAINT "friend_receiver_id_fkey" FOREIGN KEY ("receiver_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Story" ADD CONSTRAINT "Story_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "story" ADD CONSTRAINT "story_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

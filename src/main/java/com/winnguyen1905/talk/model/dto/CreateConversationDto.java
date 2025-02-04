@@ -1,13 +1,12 @@
-package com.winnguyen1905.talk.model;
+package com.winnguyen1905.talk.model.dto;
 
 import java.util.UUID;
 
-public record CreateConversationRequest(
+public record CreateConversationDto(
     UUID id,
     String title,
     UUID channelId,
     UUID creatorId,
     UUID receiverId,
     boolean isGroup) {
-
 }
