@@ -12,7 +12,7 @@ import com.winnguyen1905.talk.common.constant.ReportStatus;
 @Entity
 @SuperBuilder
 @Table(name = "report")
-public class Report {
+public class EReport {
   @Id     
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", columnDefinition = "UUID", updatable = false)

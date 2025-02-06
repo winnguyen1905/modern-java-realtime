@@ -11,7 +11,7 @@ import java.util.UUID;
 @Entity
 @SuperBuilder
 @Table(name = "user_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "contact_id" }))
-public class UserContact {
+public class EUserContact {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)

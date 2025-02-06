@@ -15,7 +15,7 @@ import java.util.UUID;
 @Entity
 @SuperBuilder
 @Table(name = "device")
-public class Device {
+public class EDevice {
 
   @Id   
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,7 +49,7 @@ public class Device {
   private User user;
 
   @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<Access> accesses;
+  private List<EAccess> accesses;
 }
 
 enum DeviceType {

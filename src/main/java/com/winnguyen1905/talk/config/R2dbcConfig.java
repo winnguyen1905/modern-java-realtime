@@ -35,6 +35,7 @@ public class R2dbcConfig extends AbstractR2dbcConfiguration {
 
   @Bean
   @Override
+  @SuppressWarnings("null")
   public ConnectionFactory connectionFactory() {
     return new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder()
         .host(host)

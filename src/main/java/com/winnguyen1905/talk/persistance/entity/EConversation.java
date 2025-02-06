@@ -1,6 +1,8 @@
 package com.winnguyen1905.talk.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -8,10 +10,12 @@ import java.util.UUID;
 
 import com.winnguyen1905.talk.common.constant.ConversationType;
 
+@Getter
+@Setter
 @Entity
 @SuperBuilder
 @Table(name = "conversation")
-public class Conversation {
+public class EConversation {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
@@ -31,11 +35,11 @@ public class Conversation {
   public ConversationType type;
 
   @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
-  public List<Message> messages;
+  public List<EMessage> messages;
 
   @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
-  public List<Participant> participants;
+  public List<EParticipant> participants;
 
   @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
-  public List<DeletedConversation> deletedConversations;
+  public List<EDeletedConversation> deletedConversations;
 }

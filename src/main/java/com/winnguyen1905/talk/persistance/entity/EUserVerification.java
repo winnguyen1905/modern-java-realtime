@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @SuperBuilder
 @Table(name = "user_verification")
-public class UserVerification {
+public class EUserVerification {
   @Id   
   @GeneratedValue
   @Column(name = "user_id", columnDefinition = "UUID")

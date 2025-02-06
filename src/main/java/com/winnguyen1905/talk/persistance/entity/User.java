@@ -11,13 +11,9 @@ import java.util.ArrayList;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 
 import org.springframework.data.relational.core.mapping.Column;
-// import jakarta.persistence.FetchType;
-// import jakarta.persistence.OneToMany;
-// import jakarta.persistence.OneToOne;
 import org.springframework.data.annotation.Transient;
 
 @Entity
@@ -71,85 +67,67 @@ public class User {
 
   // Relationships
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<Device> devices = new ArrayList<>();
+  private List<EDevice> devices = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<Message> messages = new ArrayList<>();
+  private List<EMessage> messages = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<Participant> participants = new ArrayList<>();
+  private List<EParticipant> participants = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<Report> reports = new ArrayList<>();
+  private List<EReport> reports = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<DeletedMessage> deletedMessages = new ArrayList<>();
+  private List<EDeletedMessage> deletedMessages = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<DeletedConversation> deletedConversations = new ArrayList<>();
+  private List<EDeletedConversation> deletedConversations = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<Access> accesses = new ArrayList<>();
+  private List<EAccess> accesses = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<UserContact> userContacts = new ArrayList<>();
+  private List<EUserContact> userContacts = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<UserContact> contacts = new ArrayList<>();
+  private List<EUserContact> contacts = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
+
   @Builder.Default
-  private List<BlockList> blockLists = new ArrayList<>();
+  private List<EBlockList> blockLists = new ArrayList<>();
 
   @Transient
-  // @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
-  private UserVerification userVerification;
+  private EUserVerification userVerification;
 
   @Transient
-  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
   @Builder.Default
-  private List<Story> stories = new ArrayList<>();
+  private List<EStory> stories = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
   @Builder.Default
-  private List<Friend> friendsRequested = new ArrayList<>();
+  private List<EFriend> friendsRequested = new ArrayList<>();
 
   @Transient
-  // @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
   @Builder.Default
-  private List<Friend> friendsReceived = new ArrayList<>();
+  private List<EFriend> friendsReceived = new ArrayList<>();
 }

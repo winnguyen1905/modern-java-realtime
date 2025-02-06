@@ -10,7 +10,7 @@ import java.time.Instant;
 @Entity
 @SuperBuilder
 @Table(name = "contact")
-public class Contact {
+public class EContact {
 
   @Id    @GeneratedValue(strategy = GenerationType.UUID)
 

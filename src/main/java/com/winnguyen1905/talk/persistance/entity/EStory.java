@@ -9,7 +9,7 @@ import java.util.UUID;
 @Entity
 @SuperBuilder
 @Table(name = "story")
-public class Story {
+public class EStory {
   @Id  
   @GeneratedValue(strategy = GenerationType.UUID)
 
