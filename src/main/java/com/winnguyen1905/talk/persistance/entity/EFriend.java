@@ -10,7 +10,7 @@ import java.util.UUID;
 @Entity
 @SuperBuilder
 @Table(name = "friend", uniqueConstraints = @UniqueConstraint(columnNames = { "requester_id", "receiver_id" }))
-public class Friend {
+public class EFriend {
   @Id  @GeneratedValue(strategy = GenerationType.UUID)
 
   @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
