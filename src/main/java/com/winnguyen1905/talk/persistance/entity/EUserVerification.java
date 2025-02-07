@@ -1,23 +1,22 @@
 package com.winnguyen1905.talk.persistance.entity;
 
-import java.util.UUID;
-import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
-@Entity
+@Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user_verification")
 public class EUserVerification {
-  @Id   
-  @GeneratedValue
-  @Column(name = "user_id", columnDefinition = "UUID")
+  @Id
+  @Column("user_id")
   private UUID id;
 
-  @Column(name = "verification_code", nullable = false)
+  @Column("verification_code")
   private String verificationCode;
-
-  @MapsId
-  @OneToOne
-  @JoinColumn(name = "user_id")
-  private User user;
 }
