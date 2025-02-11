@@ -1,41 +1,30 @@
 package com.winnguyen1905.talk.persistance.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
-import lombok.Builder.Default;
 import lombok.experimental.SuperBuilder;
-
-import java.time.Instant;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 import java.util.UUID;
 
-@Entity
+@Data
 @SuperBuilder
-@Table(name = "user_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "contact_id" }))
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "user_contact")
 public class EUserContact {
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
-  public UUID id;
+  private UUID id;
 
-  @Column(name = "user_id", nullable = false)
-  public UUID userId;
+  @Column("user_id")
+  private UUID userId;
 
-  @Column(name = "contact_id", nullable = false)
-  public UUID contactId;
+  @Column("contact_id")
+  private UUID contactId;
 
-  @Default
-  @Column(name = "first_name", nullable = false)
-  public String firstName = "";
+  @Column("first_name")
+  private String firstName;
 
-  @Default
-  @Column(name = "last_name", nullable = false)
-  public String lastName = "";
-
-  @ManyToOne
-  @JoinColumn(name = "user_id", insertable = false, updatable = false)
-  public User user;
-
-  @ManyToOne
-  @JoinColumn(name = "contact_id", insertable = false, updatable = false)
-  public User contact;
+  @Column("last_name")
+  private String lastName;
 }

@@ -2,8 +2,19 @@ package com.winnguyen1905.talk.rest.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.winnguyen1905.talk.common.constant.UserContactDTO;
+import com.winnguyen1905.talk.rest.service.UserContactService;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.UUID;
 
 @RestController
@@ -18,14 +29,14 @@ public class UserContactController {
 
   // 1. Add a new contact
   @PostMapping
-  public Mono<ResponseEntity<EUserContact>> addContact(@RequestBody EUserContact contact) {
-    return userContactService.addContact(contact)
+  public Mono<ResponseEntity<UserContactDTO>> addContact(@RequestBody UserContactDTO contactDTO) {
+    return userContactService.addContact(contactDTO)
         .map(ResponseEntity::ok);
   }
 
   // 2. Get all contacts for a specific user
   @GetMapping("/user/{userId}")
-  public Flux<EUserContact> getUserContacts(@PathVariable UUID userId) {
+  public Flux<UserContactDTO> getUserContacts(@PathVariable UUID userId) {
     return userContactService.getUserContacts(userId);
   }
 
