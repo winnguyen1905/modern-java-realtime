@@ -1,38 +1,39 @@
 package com.winnguyen1905.talk.persistance.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.UUID;
 import java.time.Instant;
+import java.util.UUID;
 
-@Entity
+@Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "contact")
 public class EContact {
 
-  @Id    @GeneratedValue(strategy = GenerationType.UUID)
+  @Id
+  private UUID id;
 
-  @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
-  public UUID id;
+  @Column("first_name")
+  private String firstName;
 
-  @Column(name = "first_name", nullable = false)
-  public String firstName = "";
+  @Column("middle_name")
+  private String middleName;
 
-  @Column(name = "middle_name")
-  public String middleName;
+  @Column("last_name")
+  private String lastName;
 
-  @Column(name = "last_name", nullable = false)
-  public String lastName = "";
+  @Column("phone")
+  private String phone;
 
-  @Column(name = "phone", nullable = false)
-  public String phone;
+  @Column("email")
+  private String email;
 
-  @Column(name = "email", nullable = false)
-  public String email;
-
-  @Column(name = "created_at", nullable = false, updatable = false)
-  public Instant createdAt = Instant.now();
- 
+  @Column("created_at")
+  private Instant createdAt;
 }
