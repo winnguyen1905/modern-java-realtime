@@ -6,26 +6,35 @@ import lombok.experimental.SuperBuilder;
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
+import com.winnguyen1905.talk.common.constant.StoryType;
+
+import java.time.Instant;
+import java.util.UUID;
+
+@Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "story")
 public class EStory {
-  @Id  
-  @GeneratedValue(strategy = GenerationType.UUID)
+  @Id
+  private UUID id;
 
-  @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
-  public UUID id;
+  @Column("user_id")
+  private UUID userId;
 
-  @Column(name = "user_id", nullable = false)
-  public UUID userId;
+  @Column("content")
+  private String content;
 
-  @Column(name = "content", nullable = false, columnDefinition = "TEXT")
-  public String content;
+  @Column("expires_at")
+  private Instant expiresAt;
 
-  @Column(name = "expires_at", nullable = false)
-  public Instant expiresAt;
-
-  @ManyToOne
-  @JoinColumn(name = "user_id", insertable = false, updatable = false)
-  public User user;
+  @Column("story_type")
+  private StoryType storyType;
 }
