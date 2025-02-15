@@ -1,41 +1,41 @@
 package com.winnguyen1905.talk.persistance.entity;
 
-import jakarta.persistence.*;
-import lombok.Builder.Default;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
+import com.winnguyen1905.talk.common.constant.ReportStatus;
 
 import java.time.Instant;
 import java.util.UUID;
 
-import com.winnguyen1905.talk.common.constant.ReportStatus;
-
-@Entity
+@Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "report")
 public class EReport {
-  @Id     
-  @GeneratedValue(strategy = GenerationType.UUID)
-  @Column(name = "id", columnDefinition = "UUID", updatable = false)
-  public UUID id;
 
-  @Column(name = "user_id", nullable = false)
-  public UUID userId;
+  @Id
+  private UUID id;
 
-  @Column(name = "participant_id", nullable = false)
-  public UUID participantId;
+  @Column("user_id")
+  private UUID userId;
 
-  @Column(name = "report_type", nullable = false)
-  public String reportType;
+  @Column("participant_id")
+  private UUID participantId;
 
-  @Column(name = "notes")
-  public String notes;
+  @Column("report_type")
+  private String reportType; // create report type
 
-  @Default
-  @Enumerated(EnumType.STRING)
-  @Column(name = "status", nullable = false)
-  public ReportStatus status = ReportStatus.PENDING;
+  @Column("notes")
+  private String notes;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", insertable = false, updatable = false)
-  public User user;
-}
+  @Column("status")
+  private ReportStatus status;
+
+  @Column("created_at")
+  private Instant createdAt;
+} 
