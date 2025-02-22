@@ -17,9 +17,6 @@ import reactor.core.publisher.Mono;
 
 public final class SecurityUtils {
 
-  @Value("${jwt.access_token-validity-in-seconds}")
-  private String jwtExpiration;
-
   public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS256;
 
   private static Flux<AuthPermission> jsonToPermission(List<String> permissionStrings) {
