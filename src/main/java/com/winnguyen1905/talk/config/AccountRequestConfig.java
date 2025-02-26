@@ -15,7 +15,8 @@ public class AccountRequestConfig {
   Function<UserDetails, TAccountRequest> fetchUser() {
     return (principal -> {
       return TAccountRequest.builder()
-          .id(UUID.fromString(principal.getUsername())).build();
+          .id(UUID.fromString(principal.getUsername()))
+          .build();
     });
   }
 }
