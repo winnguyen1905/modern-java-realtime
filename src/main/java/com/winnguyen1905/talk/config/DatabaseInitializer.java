@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.reactive.TransactionalOperator;
 
-import com.winnguyen1905.talk.persistance.entity.User;
+import com.winnguyen1905.talk.persistance.entity.EUser;
 import com.winnguyen1905.talk.persistance.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class DatabaseInitializer implements CommandLineRunner {
     //       System.out.println(x);
     //       return Mono.empty();
     //     }).subscribe();
-    userRepository.save(User.builder()
+    userRepository.save(EUser.builder()
         // .id(UUID.randomUUID()) // Generating a random UUID
         .firstName("Jose")
         .middleName("M.")

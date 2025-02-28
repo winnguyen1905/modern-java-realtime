@@ -34,6 +34,8 @@ public final class SecurityUtils {
         });
   }
 
+  
+
   public static Flux<AuthPermission> getCurrentUsersPermissions() {
     return ReactiveSecurityContextHolder.getContext()
         .map(SecurityContext::getAuthentication)

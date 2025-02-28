@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.winnguyen1905.talk.common.constant.AccountRole;
+
 import lombok.Builder;
 
 @Builder
@@ -16,7 +18,7 @@ public record CustomUserDetails(
     String type,
     String email,
     String phone,
-    AuthRole role,
+    AccountRole accountRole,
     Boolean status,
     String lastName,
     String username,
@@ -24,8 +26,8 @@ public record CustomUserDetails(
     String firstName) implements UserDetails {
 
   @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {  
-    return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.role.getName()));
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.accountRole));
   }
 
   @Override
