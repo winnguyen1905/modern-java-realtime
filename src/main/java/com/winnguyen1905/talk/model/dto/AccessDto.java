@@ -7,3 +7,4 @@ import lombok.Builder;
 @Builder
 public record AccessDto(UUID userId, UUID deviceId, String token) {
 }
+
