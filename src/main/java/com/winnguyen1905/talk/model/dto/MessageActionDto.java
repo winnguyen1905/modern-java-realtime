@@ -7,6 +7,4 @@ public record MessageActionDto(
   UUID userId,
   UUID conversationId,
   String action
-) {
-  
-}
+) {}

@@ -2,7 +2,7 @@ package com.winnguyen1905.talk.model.dto;
 
 import java.util.UUID;
 
-public record CreateConversationDto(
+public record ConversationDto(
     UUID id,
     String title,
     UUID channelId,
