@@ -8,7 +8,7 @@ import com.winnguyen1905.talk.common.constant.ReportStatus;
 import lombok.Builder;
 
 @Builder
-public record ReportDTO(
+public record ReportDto(
     UUID id,
     String title,
     String description,
