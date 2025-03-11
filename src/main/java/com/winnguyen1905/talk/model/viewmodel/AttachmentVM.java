@@ -3,7 +3,7 @@ package com.winnguyen1905.talk.model.viewmodel;
 import lombok.Builder;
 
 @Builder
-public record AttachmentVM(
+public record AttachmentVm(
     String id,
     String messageId,
     String thumbUrl,

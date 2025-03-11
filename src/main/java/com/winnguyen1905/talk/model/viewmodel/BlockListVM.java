@@ -5,6 +5,6 @@ import lombok.Builder;
 import java.util.UUID;
 
 @Builder
-public record BlockListVM(UUID id, UUID blockerId, UUID blockedId) {
-  public BlockListVM {}
+public record BlockListVm(UUID id, UUID blockerId, UUID blockedId) {
+  public BlockListVm {}
 }

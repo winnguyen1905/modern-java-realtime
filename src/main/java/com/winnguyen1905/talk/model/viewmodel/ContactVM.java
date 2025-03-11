@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record ContactVM(
+public record ContactVm(
     UUID id,
     String firstName,
     String middleName,
