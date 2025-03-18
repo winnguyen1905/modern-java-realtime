@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class UserContactVM {
+public class UserContactVm {
   private UUID id;
   private UUID userId;
   private UUID contactId;
