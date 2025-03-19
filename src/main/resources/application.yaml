@@ -27,13 +27,28 @@ spring:
       max-size: 20
       max-idle-time: 30m
     initialization-mode: none
-
+  rabbitmq:
+    host: localhost # RabbitMQ host (localhost if running on the same machine)
+    port: 5672 # Default RabbitMQ port
+    username: guest # Default RabbitMQ username
+    password: guest # Default RabbitMQ password
+    virtual-host: / # Default virtual host ("/")
+    listener:
+      simple:
+        retry:
+          enabled: true # Enable retry for message consumption
+          initial-interval: 1000 # Initial retry interval in milliseconds
+          max-attempts: 5 # Maximum number of retry attempts
+        acknowledge-mode: auto # Auto acknowledgment of messages
   sql:
     init:
       platform: postgresql
       mode: always
 
   data:
+    redis:
+      host: localhost
+      port: 6379
     r2dbc:
       repositories:
         enabled: true # Enable reactive repositories
@@ -50,3 +65,7 @@ logging:
         client:
           sql:
             enabled: false
+
+socket-server:
+  port: 8085
+  host: localhost

@@ -18,12 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/friend-invite")
@@ -87,7 +81,7 @@ public class FriendInviteController {
   }
 
   // 5. Get Pending Friend Requests
-  @GetMapping("/pending/{userId}")
+  @GetMapping("/pending")
   @Operation(summary = "Get Pending Friend Requests", description = "Retrieves all pending friend requests for the user.")
   @ApiResponse(responseCode = "200", description = "List of pending friend requests")
   public Flux<FriendInviteVm> getPendingRequests(

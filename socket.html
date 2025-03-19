@@ -1,0 +1,32 @@
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script>
+    // Connect to the Chat Namespace
+    var chatSocket = io("http://localhost:9092/chat");
+
+    chatSocket.on("connect", function() {
+        console.log("Connected to Chat Server");
+    });
+
+    chatSocket.on("chat_message", function(data) {
+        console.log("Chat: " + data.sender + " says " + data.message);
+    });
+
+    function sendChatMessage() {
+        chatSocket.emit("chat_message", { sender: "User1", message: "Hello!" });
+    }
+
+    // Connect to the Call Namespace
+    var callSocket = io("http://localhost:9092/call");
+
+    callSocket.on("connect", function() {
+        console.log("Connected to Call Server");
+    });
+
+    callSocket.on("call_request", function(data) {
+        console.log("Call from " + data.caller + " to " + data.receiver);
+    });
+
+    function makeCall() {
+        callSocket.emit("call_request", { caller: "User1", receiver: "User2" });
+    }
+</script>

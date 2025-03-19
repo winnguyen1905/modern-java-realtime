@@ -21,20 +21,20 @@ import java.util.UUID;
 @Table(name = "access")
 public class EAccess {
   @Id
-  @org.springframework.data.relational.core.mapping.Column("id")
+  @Column("id")
   private UUID id;
 
-  @org.springframework.data.relational.core.mapping.Column("user_id")
+  @Column("user_id")
   private UUID userId;
 
-  @org.springframework.data.relational.core.mapping.Column("device_id") 
+  @Column("device_id") 
   private UUID deviceId;
 
-  @org.springframework.data.relational.core.mapping.Column("token")
+  @Column("token")
   private String token;
 
   @Transient
-  private User user;
+  private EUser user;
 
   @Transient 
   private EDevice device;

@@ -16,12 +16,10 @@ import jakarta.persistence.Entity;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.annotation.Transient;
 
-@Entity
+@Data
 @SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "user", schema = "public")
-public class User {
+public class EUser {
   @Id
   @Column("id")
   private UUID id;
@@ -123,11 +121,11 @@ public class User {
   @Builder.Default
   private List<EStory> stories = new ArrayList<>();
 
-  @Transient
-  @Builder.Default
-  private List<EFriend> friendsRequested = new ArrayList<>();
+  // @Transient
+  // @Builder.Default
+  // private List<EFriend> friendsRequested = new ArrayList<>();
 
-  @Transient
-  @Builder.Default
-  private List<EFriend> friendsReceived = new ArrayList<>();
+  // @Transient
+  // @Builder.Default
+  // private List<EFriend> friendsReceived = new ArrayList<>();
 }

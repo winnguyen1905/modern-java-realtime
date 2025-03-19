@@ -2,7 +2,8 @@ package com.winnguyen1905.talk.rest.service;
 
 import org.springframework.stereotype.Service;
 
-import com.winnguyen1905.talk.model.dto.StoryDTO;
+import com.winnguyen1905.talk.common.annotation.TAccountRequest;
+import com.winnguyen1905.talk.model.dto.StoryDto;
 import com.winnguyen1905.talk.persistance.entity.EStory;
 import com.winnguyen1905.talk.persistance.repository.StoryRepository;
 
@@ -28,8 +29,8 @@ public class StoryService {
   }
 
   // Convert Entity to DTO
-  private StoryDTO toDTO(EStory story) {
-    return StoryDTO.builder()
+  private StoryDto toDTO(EStory story) {
+    return StoryDto.builder()
         .id(story.getId())
         .userId(story.getUserId())
         .content(story.getContent())
@@ -38,7 +39,7 @@ public class StoryService {
   }
 
   // Convert DTO to Entity
-  private EStory toEntity(StoryDTO dto) {
+  private EStory toEntity(StoryDto dto) {
     EStory story = new EStory();
     story.setId(dto.id() != null ? dto.id() : UUID.randomUUID());
     story.setUserId(dto.userId());
@@ -48,23 +49,23 @@ public class StoryService {
   }
 
   // 1. Create a new story
-  public Mono<StoryDTO> createStory(StoryDTO storyDTO) {
+  public Mono<StoryDto> createStory(StoryDto storyDTO, TAccountRequest accountRequest) {
     EStory story = toEntity(storyDTO);
     return storyRepository.save(story).map(this::toDTO);
   }
 
   // 2. Get all active stories (not expired)
-  public Flux<StoryDTO> getActiveStories() {
+  public Flux<StoryDto> getActiveStories(TAccountRequest accountRequest) {
     return storyRepository.findByExpiresAtAfter(Instant.now()).map(this::toDTO);
   }
 
   // 3. Get stories for a specific user
-  public Flux<StoryDTO> getUserStories(UUID userId) {
+  public Flux<StoryDto> getUserStories(UUID userId, TAccountRequest accountRequest) {
     return storyRepository.findByUserId(userId).map(this::toDTO);
   }
 
   // 4. Delete a story by ID
-  public Mono<Void> deleteStory(UUID id) {
+  public Mono<Void> deleteStory(UUID id, TAccountRequest accountRequest) {
     return storyRepository.deleteById(id);
   }
 }

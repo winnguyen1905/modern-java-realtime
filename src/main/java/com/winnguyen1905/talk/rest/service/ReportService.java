@@ -2,8 +2,10 @@ package com.winnguyen1905.talk.rest.service;
 
 import org.springframework.stereotype.Service;
 
+import com.winnguyen1905.talk.common.annotation.TAccountRequest;
 import com.winnguyen1905.talk.common.constant.ReportStatus;
-import com.winnguyen1905.talk.model.dto.ReportDTO;
+import com.winnguyen1905.talk.model.dto.ReportDto;
+import com.winnguyen1905.talk.model.dto.UpdateReportDto;
 import com.winnguyen1905.talk.persistance.entity.EReport;
 import com.winnguyen1905.talk.persistance.repository.ReportRepository;
 
@@ -28,8 +30,8 @@ public class ReportService {
   }
 
   // Convert Entity to DTO
-  private ReportDTO toDTO(EReport report) {
-    return ReportDTO.builder()
+  private ReportDto toDTO(EReport report) {
+    return ReportDto.builder()
         .id(report.getId())
         // .title(report.getTitle())
         // .description(report.getDescription())
@@ -39,7 +41,7 @@ public class ReportService {
   }
 
   // TODO: FIX LATER (some field with wrong mean or meanless)
-  private EReport toEntity(ReportDTO dto) {
+  private EReport toEntity(ReportDto dto) {
     return EReport.builder()
         .id(dto.id() != null ? dto.id() : UUID.randomUUID())
         .notes(dto.title())
@@ -50,33 +52,33 @@ public class ReportService {
   }
 
   // 1. Submit a report
-  public Mono<ReportDTO> submitReport(ReportDTO reportDTO) {
+  public Mono<ReportDto> submitReport(ReportDto reportDTO, TAccountRequest accountRequest) {
     EReport report = toEntity(reportDTO);
     return reportRepository.save(report).map(this::toDTO);
   }
 
   // 2. Get all reports
-  public Flux<ReportDTO> getAllReports() {
+  public Flux<ReportDto> getAllReports(TAccountRequest accountRequest) {
     return reportRepository.findAll().map(this::toDTO);
   }
 
   // 3. Get a report by ID
-  public Mono<ReportDTO> getReportById(UUID id) {
+  public Mono<ReportDto> getReportById(UUID id, TAccountRequest accountRequest) {
     return reportRepository.findById(id).map(this::toDTO);
   }
 
   // 4. Update report status
-  public Mono<ReportDTO> updateReportStatus(UUID id, ReportStatus status) {
-    return reportRepository.findById(id)
+  public Mono<ReportDto> updateReportStatus(UpdateReportDto updateReportDto, TAccountRequest accountRequest) {
+    return reportRepository.findById(updateReportDto.id())
         .flatMap(report -> {
-          report.setStatus(status);
+          report.setStatus(updateReportDto.reportStatus());
           return reportRepository.save(report);
         })
         .map(this::toDTO);
   }
 
   // 5. Delete a report
-  public Mono<Void> deleteReport(UUID id) {
+  public Mono<Void> deleteReport(UUID id, TAccountRequest accountRequest) {
     return reportRepository.deleteById(id);
   }
 }

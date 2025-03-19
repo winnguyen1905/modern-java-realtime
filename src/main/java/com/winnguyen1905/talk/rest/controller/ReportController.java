@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.winnguyen1905.talk.common.annotation.TAccountRequest;
 import com.winnguyen1905.talk.common.constant.ReportStatus;
-import com.winnguyen1905.talk.model.dto.ReportDTO;
+import com.winnguyen1905.talk.model.dto.ReportDto;
+import com.winnguyen1905.talk.model.dto.UpdateReportDto;
 import com.winnguyen1905.talk.rest.service.ReportService;
 
 import reactor.core.publisher.Flux;
@@ -31,20 +32,20 @@ public class ReportController {
 
   // 1. Submit a report
   @PostMapping
-  public Mono<ResponseEntity<ReportDTO>> submitReport(@RequestBody ReportDTO reportDTO, @RequestBody TAccountRequest accountRequest) {
+  public Mono<ResponseEntity<ReportDto>> submitReport(@RequestBody ReportDto reportDTO, @RequestBody TAccountRequest accountRequest) {
     return reportService.submitReport(reportDTO, accountRequest)
         .map(ResponseEntity::ok);
   }
 
   // 2. Get all reports
   @GetMapping
-  public Flux<ReportDTO> getAllReports(@RequestBody TAccountRequest accountRequest) {
+  public Flux<ReportDto> getAllReports(@RequestBody TAccountRequest accountRequest) {
     return reportService.getAllReports(accountRequest);
   }
 
   // 3. Get a report by ID
   @GetMapping("/{id}")
-  public Mono<ResponseEntity<ReportDTO>> getReportById(@PathVariable UUID id, @RequestBody TAccountRequest accountRequest) {
+  public Mono<ResponseEntity<ReportDto>> getReportById(@PathVariable UUID id, @RequestBody TAccountRequest accountRequest) {
     return reportService.getReportById(id, accountRequest)
         .map(ResponseEntity::ok)
         .defaultIfEmpty(ResponseEntity.notFound().build());
@@ -52,8 +53,8 @@ public class ReportController {
 
   // 4. Update report status
   @PatchMapping("/{id}/status")
-  public Mono<ResponseEntity<ReportDTO>> updateReportStatus(@PathVariable UUID id, @RequestParam ReportStatus status, @RequestBody TAccountRequest accountRequest) {
-    return reportService.updateReportStatus(id, status, accountRequest)
+  public Mono<ResponseEntity<ReportDto>> updateReportStatus(@RequestBody UpdateReportDto updateReportDto, @RequestBody TAccountRequest accountRequest) {
+    return reportService.updateReportStatus(updateReportDto, accountRequest)
         .map(ResponseEntity::ok)
         .defaultIfEmpty(ResponseEntity.notFound().build());
   }

@@ -2,8 +2,9 @@ package com.winnguyen1905.talk.rest.service;
 
 import org.springframework.stereotype.Service;
 
+import com.winnguyen1905.talk.common.annotation.TAccountRequest;
 import com.winnguyen1905.talk.common.constant.UserContactDTO;
-import com.winnguyen1905.talk.model.viewmodel.UserContactVM;
+import com.winnguyen1905.talk.model.viewmodel.UserContactVm;
 import com.winnguyen1905.talk.persistance.entity.EUserContact;
 import com.winnguyen1905.talk.persistance.repository.UserContactRepository;
 
@@ -32,7 +33,7 @@ public class UserContactService {
   }
 
   // 1. Add a new contact
-  public Mono<UserContactVM> addContact(UserContactDTO contactDTO) {
+  public Mono<UserContactVm> addContact(UserContactDTO contactDTO, TAccountRequest accountRequest) {
     EUserContact contact = EUserContact.builder()
         .id(UUID.randomUUID())
         .userId(contactDTO.userId())
@@ -42,7 +43,7 @@ public class UserContactService {
         .build();
 
     return userContactRepository.save(contact)
-        .map(savedContact -> UserContactVM.builder()
+        .map(savedContact -> UserContactVm.builder()
             .id(savedContact.getId())
             .userId(savedContact.getUserId())
             .contactId(savedContact.getContactId())
@@ -52,9 +53,9 @@ public class UserContactService {
   }
 
   // 2. Get all contacts for a specific user
-  public Flux<UserContactVM> getUserContacts(UUID userId) {
-    return userContactRepository.findByUserId(userId)
-        .map(contact -> UserContactVM.builder()
+  public Flux<UserContactVm> getUserContacts(TAccountRequest accountRequest) {
+    return userContactRepository.findByUserId(accountRequest.id())
+        .map(contact -> UserContactVm.builder()
             .id(contact.getId())
             .userId(contact.getUserId())
             .contactId(contact.getContactId())
@@ -64,7 +65,7 @@ public class UserContactService {
   }
 
   // 3. Delete a contact
-  public Mono<Void> deleteContact(UUID id) {
+  public Mono<Void> deleteContact(UUID id, TAccountRequest accountRequest) {
     return userContactRepository.deleteById(id);
   }
 }

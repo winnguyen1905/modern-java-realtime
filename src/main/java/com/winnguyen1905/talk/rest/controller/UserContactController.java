@@ -3,9 +3,10 @@ package com.winnguyen1905.talk.rest.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.winnguyen1905.talk.common.annotation.TAccountRequest;
 import com.winnguyen1905.talk.common.constant.UserContactDTO;
 import com.winnguyen1905.talk.exception.ErrorVm;
-import com.winnguyen1905.talk.model.viewmodel.UserContactVM;
+import com.winnguyen1905.talk.model.viewmodel.UserContactVm;
 import com.winnguyen1905.talk.rest.service.UserContactService;
 
 import reactor.core.publisher.Flux;
@@ -36,26 +37,27 @@ public class UserContactController {
   // 1. Add a new contact
   @Operation(summary = "Add a new contact", description = "Creates a new user contact entry")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(implementation = UserContactVM.class))),
+      @ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(implementation = UserContactVm.class))),
       @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = ErrorVm.class))),
       @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorVm.class)))
   })
   @PostMapping
-  public Mono<ResponseEntity<UserContactVM>> addContact(@RequestBody UserContactDTO contactDTO) {
-    return userContactService.addContact(contactDTO)
+  public Mono<ResponseEntity<UserContactVm>> addContact(@RequestBody UserContactDTO contactDTO,
+      @RequestBody TAccountRequest accountRequest) {
+    return userContactService.addContact(contactDTO, accountRequest)
         .map(ResponseEntity::ok);
   }
 
   // 2. Get all contacts for a specific user
   @Operation(summary = "Get user contacts", description = "Retrieves all contacts associated with a user")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = UserContactVM.class))),
+      @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = UserContactVm.class))),
       @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = ErrorVm.class))),
       @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorVm.class)))
   })
   @GetMapping("/user/{userId}")
-  public Flux<UserContactVM> getUserContacts(@PathVariable UUID userId) {
-    return userContactService.getUserContacts(userId);
+  public Flux<UserContactVm> getUserContacts(@RequestBody TAccountRequest accountRequest) {
+    return userContactService.getUserContacts(accountRequest);
   }
 
   // 3. Delete a contact
@@ -66,8 +68,8 @@ public class UserContactController {
       @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorVm.class)))
   })
   @DeleteMapping("/{id}")
-  public Mono<ResponseEntity<Void>> deleteContact(@PathVariable UUID id) {
-    return userContactService.deleteContact(id)
+  public Mono<ResponseEntity<Void>> deleteContact(@PathVariable UUID id, @RequestBody TAccountRequest accountRequest) {
+    return userContactService.deleteContact(id, accountRequest)
         .then(Mono.just(ResponseEntity.noContent().build()));
   }
 }

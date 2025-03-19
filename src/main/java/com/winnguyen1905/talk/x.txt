@@ -1,0 +1,46 @@
+@Service
+@RequiredArgsConstructor
+public class ChatService {
+
+    private final SocketIOServer socketIOServer;
+    private final RabbitTemplate rabbitTemplate;
+
+    public void sendMessage(String receiverId, ChatMessage message) {
+        // Get the Socket.IO client
+        if (socketIOServer.getNamespace("/chat").getRoomOperations(receiverId) != null) {
+            CompletableFuture<Boolean> ackFuture = new CompletableFuture<>();
+
+            socketIOServer.getNamespace("/chat").getRoomOperations(receiverId)
+                .sendEvent("new_message", message, (ackResponse) -> {
+                    if (ackResponse == null) {
+                        ackFuture.complete(false); // No ACK received
+                    } else {
+                        ackFuture.complete(true); // Message received
+                    }
+                });
+
+            ackFuture.orTimeout(5, TimeUnit.SECONDS)
+                .exceptionally(ex -> {
+                    // If no ACK, send notification to RabbitMQ
+                    System.out.println("⚠️ User offline. Sending notification...");
+                    rabbitTemplate.convertAndSend(
+                        NotificationQueueConfig.NOTIFICATION_EXCHANGE, 
+                        NotificationQueueConfig.NOTIFICATION_ROUTING_KEY, 
+                        new NotificationEvent(receiverId, "You have an unread message!")
+                    );
+                    return false;
+                });
+        } else {
+            // If user is completely offline, send notification
+            rabbitTemplate.convertAndSend(
+                NotificationQueueConfig.NOTIFICATION_EXCHANGE, 
+                NotificationQueueConfig.NOTIFICATION_ROUTING_KEY, 
+                new NotificationEvent(receiverId, "You have an unread message!")
+            );
+        }
+    }
+}
+
+
+
+

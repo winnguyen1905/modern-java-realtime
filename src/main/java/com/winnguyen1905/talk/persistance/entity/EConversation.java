@@ -1,6 +1,6 @@
 package com.winnguyen1905.talk.persistance.entity;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
@@ -8,38 +8,40 @@ import lombok.experimental.SuperBuilder;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import com.winnguyen1905.talk.common.constant.ConversationType;
 
 @Getter
 @Setter
-@Entity
 @SuperBuilder
+@AllArgsConstructor
 @Table(name = "conversation")
 public class EConversation {
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
-  public UUID id;
+  private UUID id;
 
-  @Column(name = "conversation_title", nullable = false)
-  public String title;
+  @Column("conversation_title")
+  private String title;
 
-  @Column(name = "conversation_creator_id", nullable = false)
-  public UUID creatorId;
+  @Column("conversation_creator_id")
+  private UUID creatorId;
 
-  @Column(name = "conversation_channel_id", nullable = false)
-  public UUID channelId;
+  @Column("conversation_channel_id")
+  private UUID channelId;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "conversation_type", nullable = false)
-  public ConversationType type;
+  @Column("conversation_type")
+  private ConversationType type;
 
-  @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
-  public List<EMessage> messages;
+  @Transient
+  private List<EMessage> messages;
 
-  @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
-  public List<EParticipant> participants;
+  @Transient
+  private List<EParticipant> participants;
 
-  @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
-  public List<EDeletedConversation> deletedConversations;
+  @Transient
+  private List<EDeletedConversation> deletedConversations;
 }

@@ -11,7 +11,6 @@ import com.winnguyen1905.talk.persistance.repository.FriendInviteRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -41,9 +40,10 @@ public class FriendInviteService {
         .flatMap(invite -> {
           invite.setStatus(FriendInviteStatus.ACCEPTED);
           return friendInviteRepository.save(invite)
-              .then(friendshipService.addFriend(invite.getSenderId(), invite.getReceiverId()))
-              .thenReturn(invite);
-        }).then();
+              .then(friendshipService.addFriend(id, accountRequest))
+              .thenReturn(invite)
+              .then(Mono.empty());
+        });
   }
 
   public Mono<Void> rejectFriendRequest(UUID id, TAccountRequest accountRequest) {

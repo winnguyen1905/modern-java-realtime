@@ -1,55 +1,39 @@
 package com.winnguyen1905.talk.persistance.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
-import lombok.Builder.Default;
-import lombok.experimental.SuperBuilder;
-
-import java.util.List;
-import java.util.UUID;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import com.winnguyen1905.talk.common.constant.MessageType;
 
-import java.time.Instant;
+import java.util.UUID;
 
-@Entity
-@SuperBuilder
-@Table(name = "message")
+@Table("message")
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class EMessage {
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
-  public UUID id;
+  private UUID id;
 
-  @Default
-  @Column(name = "guid", nullable = false, unique = true)
-  public String guid = "0000000000000000";
+  @Column("is_seen")
+  private Boolean isSeen;
 
-  @Column(name = "conversation_id", nullable = false)
-  public UUID conversationId;
+  @Column("guid")
+  private String guid;
 
-  @Column(name = "sender_id", nullable = false)
-  public UUID senderId;
+  @Column("conversation_id")
+  private UUID conversationId;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "message_type", nullable = false)
-  public MessageType messageType;
+  @Column("sender_id")
+  private UUID senderId;
 
-  @Default
-  @Column(name = "message", nullable = false)
-  public String message = "NULL";
+  @Column("message_type")
+  private MessageType messageType;
 
-  @ManyToOne
-  @JoinColumn(name = "conversation_id", insertable = false, updatable = false)
-  public EConversation conversation;
-
-  @ManyToOne
-  @JoinColumn(name = "sender_id", insertable = false, updatable = false)
-  public User user;
-
-  @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-  public List<EAttachment> attachments;
-
-  @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-  public List<EDeletedMessage> deletedMessages;
+  @Column("message")
+  private String message;
 }

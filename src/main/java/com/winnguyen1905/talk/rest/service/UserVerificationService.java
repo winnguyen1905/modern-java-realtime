@@ -5,6 +5,8 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 import java.util.Random;
 
+import com.winnguyen1905.talk.common.annotation.TAccountRequest;
+import com.winnguyen1905.talk.model.dto.VerifyCodeDto;
 import com.winnguyen1905.talk.persistance.entity.EUserVerification;
 import com.winnguyen1905.talk.persistance.repository.UserVerificationRepository;
 
@@ -21,24 +23,24 @@ public class UserVerificationService {
     return String.valueOf(100000 + new Random().nextInt(900000));
   }
 
-  public Mono<EUserVerification> generateVerification(UUID userId) {
+  public Mono<EUserVerification> generateVerification(TAccountRequest accountRequest) {
     String code = generateVerificationCode();
     EUserVerification verification = EUserVerification.builder()
-        .id(userId)
+        .id(accountRequest.id())
         .verificationCode(code)
         .build();
     return userVerificationRepository.save(verification);
   }
 
-  public Mono<Boolean> verifyCode(UUID userId, String code) {
-    return userVerificationRepository.findById(userId)
-        .map(verification -> verification.getVerificationCode().equals(code))
+  public Mono<Boolean> verifyCode(VerifyCodeDto verifyCodeDto, TAccountRequest accountRequest) {
+    return userVerificationRepository.findById(accountRequest.id())
+        .map(verification -> verification.getVerificationCode().equals(verifyCodeDto.code()))
         .flatMap(isValid -> isValid
-            ? userVerificationRepository.deleteById(userId).thenReturn(true)
+            ? userVerificationRepository.deleteById(accountRequest.id()).thenReturn(true)
             : Mono.just(false));
   }
 
-  public Mono<EUserVerification> resendVerification(UUID userId) {
-    return generateVerification(userId);
+  public Mono<EUserVerification> resendVerification(TAccountRequest accountRequest) {
+    return generateVerification(accountRequest);
   }
 }

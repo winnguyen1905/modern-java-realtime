@@ -1,57 +1,42 @@
 package com.winnguyen1905.talk.persistance.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import com.winnguyen1905.talk.common.constant.DeviceType;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
-@Entity
+@Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "device")
 public class EDevice {
-
-  @Id   
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", columnDefinition = "UUID")
+  @Id
   private UUID id;
 
-  @Column(name = "user_id", nullable = false)
+  @Column("user_id")
   private UUID userId;
 
-  @Column(name = "device_id", nullable = false)
-  private String deviceId;
+  @Column("device_id")
+  private UUID deviceId;
 
-  @Column(name = "device_token", nullable = false)
+  @Column("device_token")
   private String deviceToken;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "type", nullable = false)
+  @Column("type")
   private DeviceType type;
 
-  @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
+  @Column("created_at")
   private Instant createdAt;
 
-  @UpdateTimestamp
-  @Column(name = "updated_at", nullable = false)
+  @Column("updated_at")
   private Instant updatedAt;
-
-  // Relationships
-  @ManyToOne
-  @JoinColumn(name = "user_id", insertable = false, updatable = false)
-  private User user;
-
-  @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<EAccess> accesses;
 }
 
-enum DeviceType {
-  APPLE
-}
+

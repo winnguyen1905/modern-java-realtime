@@ -1,5 +1,6 @@
 package com.winnguyen1905.talk.persistance.entity;
 
+import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
@@ -8,16 +9,16 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+@Data
 @SuperBuilder
 @Table(name = "block_list")
 public class EBlockList {
   @Id
-  @Column("id")
   private UUID id;
 
-  @Column("user_id")
-  private UUID userId;
+  @Column("blocker_id")
+  private UUID blockerId;
 
-  @Column("participant_id")
-  private UUID participantId;
+  @Column("blocked_id")
+  private UUID blockedId;
 }
